@@ -30,11 +30,24 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files — real secrets never committed; only the .env.example template is tracked
 .env*
+!.env.example
 
 # vercel
 .vercel
+
+# local IDE / agent tooling
+/.trae/
+
+# supabase CLI local state
+supabase/.temp/
+
+# Replit — let the Replit environment own its config & env files
+.replit
+.replit.app
+replit.nix
+.upm/
 
 # typescript
 *.tsbuildinfo

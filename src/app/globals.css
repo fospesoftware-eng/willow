@@ -1,26 +1,187 @@
 @import "tailwindcss";
 
+/* ============================================================
+   WILLOW GARTH — Design Tokens
+   Ultra-premium British countryside aesthetic
+   ============================================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Natural palette */
+  --forest-950: #0b1410;
+  --forest-900: #12231b;
+  --forest-800: #1a3329;
+  --forest-700: #234737;
+  --forest-600: #2d5c48;
+  --forest-500: #3a7459;
+
+  --sage-400: #9fb3a4;
+  --sage-300: #b8c8bc;
+  --sage-200: #d4ded4;
+
+  --ivory: #f7f3ec;
+  --cream: #efe7d8;
+  --bone: #e8dfcf;
+
+  --charcoal: #1c1c1a;
+  --ink: #2a2a26;
+
+  --earth-700: #5a4a36;
+  --earth-600: #6f5c43;
+  --earth-500: #8a7458;
+
+  --gold: #b8964a;
+  --gold-light: #d4b66a;
+
+  --background: var(--ivory);
+  --foreground: var(--forest-900);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 @theme inline {
+  --color-forest-950: var(--forest-950);
+  --color-forest-900: var(--forest-900);
+  --color-forest-800: var(--forest-800);
+  --color-forest-700: var(--forest-700);
+  --color-forest-600: var(--forest-600);
+  --color-forest-500: var(--forest-500);
+
+  --color-sage-400: var(--sage-400);
+  --color-sage-300: var(--sage-300);
+  --color-sage-200: var(--sage-200);
+
+  --color-ivory: var(--ivory);
+  --color-cream: var(--cream);
+  --color-bone: var(--bone);
+
+  --color-charcoal: var(--charcoal);
+  --color-ink: var(--ink);
+
+  --color-earth-700: var(--earth-700);
+  --color-earth-600: var(--earth-600);
+  --color-earth-500: var(--earth-500);
+
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --font-serif: var(--font-serif);
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+
+  --ease-out-expo: var(--ease-out-expo);
+  --ease-in-out: var(--ease-in-out);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--forest-600);
+  color: var(--ivory);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bone);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--forest-600);
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--forest-700);
+}
+
+/* Focus states */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* Typography helpers */
+.font-serif {
+  font-family: var(--font-serif), Georgia, serif;
+}
+
+.font-display {
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+}
+
+/* Luxury surfaces */
+.shadow-soft {
+  box-shadow: 0 24px 60px -24px rgba(18, 35, 27, 0.28);
+}
+.shadow-card {
+  box-shadow: 0 12px 40px -16px rgba(18, 35, 27, 0.22);
+}
+.shadow-pill {
+  box-shadow: 0 10px 30px -12px rgba(11, 20, 16, 0.45);
+}
+
+/* Grain texture overlay */
+.grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Marquee */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 40s linear infinite;
+}
+
+/* Slow zoom for hero */
+@keyframes slowZoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.12); }
+}
+.animate-slow-zoom {
+  animation: slowZoom 20s ease-out forwards;
+}
+
+/* Scroll indicator */
+@keyframes scrollDown {
+  0% { transform: translateY(0); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: translateY(14px); opacity: 0; }
+}
+.animate-scroll-dot {
+  animation: scrollDown 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
