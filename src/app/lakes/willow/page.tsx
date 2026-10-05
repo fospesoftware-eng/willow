@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/ui/PageHero";
-import { MapPanel } from "@/components/home/MapPanel";
 import { CTASection } from "@/components/home/CTASection";
 import { WillowLakeShowcase } from "@/components/lakes/willow/WillowLakeShowcase";
 import { getLake } from "@/lib/store/content";
@@ -53,7 +52,6 @@ export default async function WillowLakePage() {
         secondaryCta={{ label: "Explore All Lakes", href: "/lakes" }}
       />
       <WillowLakeShowcase lake={lake} />
-      <MapPanel />
       <CTASection />
     </>
   );

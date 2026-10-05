@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/ui/PageHero";
-import { MapPanel } from "@/components/home/MapPanel";
 import { CTASection } from "@/components/home/CTASection";
 import { OakLakeShowcase } from "@/components/lakes/oak/OakLakeShowcase";
 import { getLake } from "@/lib/store/content";
@@ -53,7 +52,6 @@ export default async function OakLakePage() {
         secondaryCta={{ label: "Explore All Lakes", href: "/lakes" }}
       />
       <OakLakeShowcase lake={lake} />
-      <MapPanel />
       <CTASection />
     </>
   );
