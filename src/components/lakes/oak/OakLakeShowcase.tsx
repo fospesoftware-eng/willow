@@ -79,10 +79,38 @@ const OTHER = [
 ];
 
 const COLLAGE = [
-  { src: "/images/match-home.jpg", alt: "Anglers lined up on a match day at Willow Garth", cls: "lg:translate-y-6" },
-  { src: "/images/site-walks.jpg", alt: "Aerial view of the three lakes and walking trails", cls: "" },
-  { src: "/images/cold-swim.jpg", alt: "Wild swimmer in the plunge pool", cls: "" },
-  { src: "/images/fishing-coaching.jpg", alt: "Coach guiding a junior angler on the platform", cls: "lg:-translate-y-6" },
+  {
+    src: "/images/site-walks.jpg",
+    alt: "Aerial view of the three lakes and walking trails",
+    label: "From above",
+    sub: "Three lakes across six secluded acres",
+    span: "sm:col-span-2",
+    ratio: "aspect-[16/8.5]",
+  },
+  {
+    src: "/images/match-home.jpg",
+    alt: "Anglers lined up on a match day at Willow Garth",
+    label: "Match days",
+    sub: "Friendly club matches",
+    span: "",
+    ratio: "aspect-square",
+  },
+  {
+    src: "/images/cold-swim.jpg",
+    alt: "Wild swimmer in the plunge pool",
+    label: "Cold-water dip",
+    sub: "Pine Lake, a short walk",
+    span: "",
+    ratio: "aspect-square",
+  },
+  {
+    src: "/images/fishing-coaching.jpg",
+    alt: "Coach guiding a junior angler on the platform",
+    label: "Coaching & juniors",
+    sub: "Guided sessions on the bank",
+    span: "sm:col-span-2",
+    ratio: "aspect-[16/8]",
+  },
 ];
 
 const TIMELINE = [
@@ -471,22 +499,56 @@ export function OakLakeShowcase({ lake }: { lake: Lake }) {
             </div>
 
             <Reveal delay={0.15}>
-              <div className="grid grid-cols-2 gap-4 md:gap-5">
-                {COLLAGE.map((c) => (
-                  <motion.figure
-                    key={c.src}
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ duration: 0.7, ease: EASE }}
-                    className={`relative aspect-square overflow-hidden rounded-[1.5rem] shadow-soft ${c.cls}`}
-                  >
-                    <OptimizedImage
-                      src={c.src}
-                      alt={c.alt}
-                      sizes="(max-width: 1024px) 46vw, 280px"
-                    />
-                    <div className="absolute inset-0 ring-1 ring-inset ring-forest-950/10" />
-                  </motion.figure>
-                ))}
+              <div className="relative">
+                <div
+                  aria-hidden
+                  className="absolute -bottom-5 -left-5 right-10 top-10 rounded-[2.25rem] bg-forest-900/[0.05]"
+                />
+                <div
+                  aria-hidden
+                  className="absolute -right-5 -top-7 h-32 w-32 rounded-full bg-gold/10 blur-3xl"
+                />
+                <div className="relative rounded-[2rem] border border-forest-900/10 bg-white p-3 shadow-soft sm:p-4">
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                    {COLLAGE.map((c) => (
+                      <motion.figure
+                        key={c.src}
+                        whileHover={{ y: -4 }}
+                        transition={{ duration: 0.7, ease: EASE }}
+                        className={`group relative overflow-hidden rounded-[1.35rem] ${c.span} ${c.ratio}`}
+                      >
+                        <motion.div
+                          className="absolute inset-0"
+                          whileHover={{ scale: 1.06 }}
+                          transition={{ duration: 1.1, ease: EASE }}
+                        >
+                          <OptimizedImage
+                            src={c.src}
+                            alt={c.alt}
+                            sizes="(max-width: 640px) 92vw, 42vw"
+                          />
+                        </motion.div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-forest-950/75 via-forest-950/[0.06] to-transparent" />
+                        <figcaption className="absolute inset-x-0 bottom-0 p-4">
+                          <span className="block text-[9px] font-bold uppercase tracking-[0.26em] text-gold-light">
+                            {c.label}
+                          </span>
+                          <span className="mt-0.5 block text-[11px] leading-tight text-sage-200">
+                            {c.sub}
+                          </span>
+                        </figcaption>
+                      </motion.figure>
+                    ))}
+                  </div>
+                </div>
+                <span className="absolute -right-2 -top-5 z-20 flex h-[4.5rem] w-[4.5rem] rotate-6 flex-col items-center justify-center rounded-full bg-forest-950 text-center shadow-soft ring-1 ring-gold/40 md:-right-5">
+                  <span className="font-display text-xl font-extrabold leading-none text-gold-light">
+                    04
+                  </span>
+                  <span className="mt-0.5 text-[8px] font-bold uppercase tracking-[0.22em] text-sage-200">
+                    pegs open
+                  </span>
+                </span>
               </div>
             </Reveal>
           </div>
