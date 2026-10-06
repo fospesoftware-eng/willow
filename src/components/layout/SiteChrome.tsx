@@ -1,17 +1,19 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { SiteHeader } from "@/components/navigation/SiteHeader";
+import { SiteHeader, type HeaderLake } from "@/components/navigation/SiteHeader";
 import { ScrollProgress } from "@/components/ui/ScrollProgress";
 
 export function SiteChrome({
   children,
   footer,
   notice,
+  lakes = [],
 }: {
   children: React.ReactNode;
   footer?: React.ReactNode;
   notice?: React.ReactNode;
+  lakes?: HeaderLake[];
 }) {
   const pathname = usePathname();
   const bare = pathname.startsWith("/admin");
@@ -23,7 +25,7 @@ export function SiteChrome({
   return (
     <>
       <ScrollProgress />
-      <SiteHeader />
+      <SiteHeader lakes={lakes} />
       <main className="flex-1">{children}</main>
       {footer}
       {notice}

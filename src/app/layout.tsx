@@ -4,7 +4,7 @@ import "./globals.css";
 import { SiteChrome } from "@/components/layout/SiteChrome";
 import { SiteFooter } from "@/components/footer/SiteFooter";
 import { NoticeBanner } from "@/components/layout/NoticeBanner";
-import { getCachedSettings } from "@/lib/store/content";
+import { getCachedSettings, getLakes } from "@/lib/store/content";
 import { absoluteUrl } from "@/lib/store/pages";
 
 const playfair = Playfair_Display({
@@ -98,7 +98,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const settings = await getCachedSettings();
+  const [settings, lakes] = await Promise.all([getCachedSettings(), getLakes()]);
 
   return (
     <html
@@ -118,6 +118,11 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <SiteChrome
+          lakes={lakes.map((l) => ({
+            name: l.name,
+            href: `/lakes/${l.slug}`,
+            number: l.number || undefined,
+          }))}
           footer={<SiteFooter settings={settings} />}
           notice={<NoticeBanner enabled={settings.noticeEnabled} text={settings.noticeText} />}
         >
