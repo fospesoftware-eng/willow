@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Calendar } from "./Calendar";
 import { TimeGrid } from "./TimeGrid";
@@ -72,6 +72,27 @@ export function SaunaBooking({ initialTicket }: { initialTicket?: TicketType }) 
 
   const canContinue = isPass ? Boolean(date) : Boolean(date && time);
 
+  // Anchor navigation — smooth-scroll to the step's section
+  const scrollToStep = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  // After filling a step, bring the next required section into view
+  const mounted = useRef(false);
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
+    const id =
+      step === "ticket"
+        ? "booking-ticket"
+        : step === "datetime"
+        ? "booking-datetime"
+        : "booking-review";
+    requestAnimationFrame(() => scrollToStep(id));
+  }, [step]);
+
   const submitCheckout = async () => {
     if (!date || (!isPass && !time)) return;
     setSubmitting(true);
@@ -129,15 +150,16 @@ export function SaunaBooking({ initialTicket }: { initialTicket?: TicketType }) 
           </span>
         </div>
 
-        {/* Step indicator */}
+        {/* Step indicator — anchor navigation to each section */}
         <ol className="flex items-center gap-2 rounded-full border border-forest-900/10 bg-ivory p-2 shadow-card">
           {[
-            { label: "Choose ticket" },
-            { label: isPass ? "Start date" : "Date & time" },
-            { label: "Review & pay" },
+            { label: "Choose ticket", id: "booking-ticket" },
+            { label: isPass ? "Start date" : "Date & time", id: "booking-datetime" },
+            { label: "Review & pay", id: "booking-review" },
           ].map((s, i) => {
             const active = i === stepIndex;
             const done = i < stepIndex;
+            const reachable = i <= stepIndex || (i === 2 && canContinue);
             return (
               <li
                 key={s.label}
@@ -149,17 +171,33 @@ export function SaunaBooking({ initialTicket }: { initialTicket?: TicketType }) 
                     : "text-forest-600/60"
                 }`}
               >
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-ivory/20 text-[10px]">
-                  {done ? "✓" : i + 1}
-                </span>
-                <span className="hidden sm:inline">{s.label}</span>
+                {reachable ? (
+                  <button
+                    type="button"
+                    onClick={() => scrollToStep(s.id)}
+                    aria-label={`Go to ${s.label}`}
+                    className="flex w-full cursor-pointer items-center justify-center gap-2"
+                  >
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-ivory/20 text-[10px]">
+                      {done ? "✓" : i + 1}
+                    </span>
+                    <span className="hidden sm:inline">{s.label}</span>
+                  </button>
+                ) : (
+                  <>
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-ivory/20 text-[10px]">
+                      {i + 1}
+                    </span>
+                    <span className="hidden sm:inline">{s.label}</span>
+                  </>
+                )}
               </li>
             );
           })}
         </ol>
 
         {step === "ticket" && (
-          <div className="rounded-[1.75rem] border border-forest-900/10 bg-white/60 p-5 md:p-7">
+          <div id="booking-ticket" className="scroll-mt-28 rounded-[1.75rem] border border-forest-900/10 bg-white/60 p-5 md:p-7">
             <h2 className="font-display text-xl font-extrabold uppercase text-forest-900">
               Choose your ticket
             </h2>
@@ -186,7 +224,7 @@ export function SaunaBooking({ initialTicket }: { initialTicket?: TicketType }) 
         )}
 
         {step === "datetime" && (
-          <div className="space-y-5">
+          <div id="booking-datetime" className="space-y-5 scroll-mt-28">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <button
                 onClick={() => setStep("ticket")}
@@ -251,7 +289,7 @@ export function SaunaBooking({ initialTicket }: { initialTicket?: TicketType }) 
         )}
 
         {step === "review" && date && (
-          <div className="space-y-5">
+          <div id="booking-review" className="space-y-5 scroll-mt-28">
             <div className="rounded-[1.75rem] border border-forest-900/10 bg-white/60 p-5 md:p-7">
               <div className="flex items-center justify-between gap-3">
                 <h2 className="font-display text-xl font-extrabold uppercase text-forest-900">
