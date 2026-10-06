@@ -167,8 +167,8 @@ function LakeRow({
             {lake.bookingUrl && (
               <a
                 href={lake.bookingUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+                target={lake.bookingUrl.startsWith("http") ? "_blank" : undefined}
+                rel={lake.bookingUrl.startsWith("http") ? "noopener noreferrer" : undefined}
                 className="inline-flex items-center rounded-full border border-forest-900/20 px-6 py-3 text-[12px] font-bold uppercase tracking-[0.12em] text-forest-900 hover:bg-forest-900 hover:text-ivory transition-colors duration-300"
               >
                 {lake.bookingLabel}

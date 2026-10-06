@@ -101,7 +101,7 @@ const INFO = [
   },
   {
     title: "Contraindications",
-    detail: "Our Sentinel screening covers health and medication support before you book.",
+    detail: "The health screening at checkout covers health and medication support before your visit.",
     icon: (
       <>
         <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z" />
@@ -473,10 +473,10 @@ export function PineLakeShowcase({ lake: _lake }: { lake: Lake }) {
                 bullets={[
                   "Wood-fired sauna session",
                   "Natural lake plunge",
-                  "Screening via Sentinel required",
+                  "Short health screening at checkout",
                 ]}
-                ctaLabel="Book Sauna & Plunge"
-                href="/sentinal"
+                ctaLabel="Book Now"
+                href="/book/sauna"
                 featured
               />
             </Reveal>
@@ -506,18 +506,18 @@ export function PineLakeShowcase({ lake: _lake }: { lake: Lake }) {
               </span>
               <div>
                 <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gold-light">
-                  Notice · Mandatory health &amp; safety screening for sauna &amp; dip
+                  Notice · Health &amp; safety screening for sauna &amp; dip
                 </p>
                 <p className="mt-2 text-[13px] leading-relaxed text-sage-200">
-                  For sauna and dip, please arrive early to complete a health
-                  screening questionnaire, if you have not already completed
-                  one when booking. It takes about 60 seconds through Sentinel.
+                  A short health screening questionnaire is built into the
+                  booking calendar — simply pick a date and complete it as part
+                  of checkout. It takes about 60 seconds.
                 </p>
                 <Link
-                  href="/sentinal"
+                  href="/book/sauna"
                   className="mt-3 inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.16em] text-ivory underline decoration-gold decoration-2 underline-offset-4 transition-colors hover:text-gold-light"
                 >
-                  Complete the screening
+                  Book a session
                   <span aria-hidden>→</span>
                 </Link>
               </div>

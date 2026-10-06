@@ -45,8 +45,8 @@ export default async function PineLakePage() {
           "Weekly £20 · monthly £60",
         ]}
         cta={{
-          label: "Book Sauna & Plunge",
-          href: "/sentinal",
+          label: "Book Now",
+          href: "/book/sauna",
           external: false,
         }}
         secondaryCta={{ label: "Explore All Lakes", href: "/lakes" }}

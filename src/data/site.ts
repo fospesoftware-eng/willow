@@ -130,8 +130,8 @@ export const lakes: Lake[] = [
       "Contrast therapy coaches on request",
     ],
     status: "open",
-    bookingUrl: booking.saunaDip,
-    bookingLabel: "Make a Safe Booking",
+    bookingUrl: "/book/sauna",
+    bookingLabel: "Book Now",
   },
 ];
 
