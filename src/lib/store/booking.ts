@@ -50,9 +50,9 @@ export type Booking = {
   id: number;
   ref: string;
   slot_id: number | null;
-  customer_name: string;
-  customer_email: string;
-  customer_phone: string;
+  customer_name: string | null;
+  customer_email: string | null;
+  customer_phone: string | null;
   party_size: number;
   health_form: HealthForm;
   status: "pending" | "paid" | "requested" | "cancelled";
@@ -197,24 +197,24 @@ export async function ensureSlot(params: {
 
 export async function bookSlot(params: {
   slotId: number;
-  name: string;
-  email: string;
-  phone: string;
+  name?: string | null;
+  email?: string | null;
+  phone?: string | null;
   partySize: number;
   ticketType: TicketType;
   unitPricePence: number;
-  healthForm: HealthForm;
+  healthForm?: HealthForm | null;
   status: "pending" | "requested";
 }): Promise<{ ok: true; booking: Booking } | { ok: false; code: string; error: string }> {
   const { data, error } = await supabaseAdmin()
     .rpc("book_sauna_slot", {
       p: {
         slot_id: params.slotId,
-        name: params.name,
-        email: params.email,
-        phone: params.phone,
+        name: params.name ?? null,
+        email: params.email ?? null,
+        phone: params.phone ?? null,
         party_size: params.partySize,
-        health_form: params.healthForm,
+        health_form: params.healthForm ?? null,
         status: params.status,
         ticket_type: params.ticketType,
         unit_price_pence: params.unitPricePence,
@@ -228,12 +228,12 @@ export async function bookSlot(params: {
 export async function createPass(params: {
   startDate: string;
   validityDays: number;
-  name: string;
-  email: string;
-  phone: string;
+  name?: string | null;
+  email?: string | null;
+  phone?: string | null;
   ticketType: TicketType;
   unitPricePence: number;
-  healthForm: HealthForm;
+  healthForm?: HealthForm | null;
   status: "pending" | "requested";
 }): Promise<{ ok: true; booking: Booking } | { ok: false; code: string; error: string }> {
   const { data, error } = await supabaseAdmin()
@@ -241,10 +241,10 @@ export async function createPass(params: {
       p: {
         start_date: params.startDate,
         validity_days: params.validityDays,
-        name: params.name,
-        email: params.email,
-        phone: params.phone,
-        health_form: params.healthForm,
+        name: params.name ?? null,
+        email: params.email ?? null,
+        phone: params.phone ?? null,
+        health_form: params.healthForm ?? null,
         status: params.status,
         ticket_type: params.ticketType,
         unit_price_pence: params.unitPricePence,
@@ -290,6 +290,24 @@ export async function setStripeSession(bookingId: number, sessionId: string): Pr
     .update({ stripe_session_id: sessionId })
     .eq("id", bookingId);
   if (error) throw new Error(error.message);
+}
+
+/** Populate contact details collected on the Stripe Checkout page. */
+export async function setBookingCustomer(
+  bookingId: number,
+  details: { name?: string | null; email?: string | null; phone?: string | null }
+): Promise<boolean> {
+  const patch: Record<string, string> = {};
+  if (details.name?.trim()) patch.customer_name = details.name.trim();
+  if (details.email?.trim()) patch.customer_email = details.email.trim();
+  if (details.phone?.trim()) patch.customer_phone = details.phone.trim();
+  if (Object.keys(patch).length === 0) return true;
+  const { error } = await supabaseAdmin()
+    .from("sauna_bookings")
+    .update(patch)
+    .eq("id", bookingId);
+  if (error) throw new Error(error.message);
+  return true;
 }
 
 export async function markBookingPaid(

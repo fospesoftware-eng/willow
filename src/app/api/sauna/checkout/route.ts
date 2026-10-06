@@ -4,7 +4,6 @@ import {
   createPass,
   ensureSlot,
   getSaunaConfig,
-  type HealthForm,
 } from "@/lib/store/booking";
 import { getStripe, stripeEnabled } from "@/lib/stripe";
 import {
@@ -21,23 +20,7 @@ type Payload = {
   date?: string; // session date for singles, start date for passes
   time?: string; // session start for singles
   quantity?: number;
-  healthForm?: HealthForm;
 };
-
-function validateHealthForm(hf: HealthForm): string | null {
-  if (!hf.full_name || hf.full_name.length < 2) return "Full name is required.";
-  if (!hf.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(hf.email))
-    return "A valid email is required.";
-  if (!hf.phone || hf.phone.length < 6) return "A valid phone number is required.";
-  if (!hf.age_confirmed) return "You must confirm you are aged 18 or over.";
-  if (!hf.emergency_contact || hf.emergency_contact.length < 4)
-    return "Emergency contact details are required.";
-  if (hf.medical_conditions && !hf.medical_details?.trim())
-    return "Please provide details of your medical conditions.";
-  if (!hf.cold_water_experience) return "Please state your cold-water experience.";
-  if (!hf.consent) return "You must accept the consent and waiver.";
-  return null;
-}
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const TIME_RE = /^\d{2}:\d{2}$/;
@@ -50,16 +33,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   }
 
-  const { ticketType, date, time, quantity, healthForm } = body;
+  const { ticketType, date, time, quantity } = body;
 
   if (!ticketType || !(ticketType in SAUNA_TICKETS)) {
     return NextResponse.json({ error: "Choose a ticket type." }, { status: 400 });
   }
   if (!date || !DATE_RE.test(date)) {
     return NextResponse.json({ error: "Choose a date." }, { status: 400 });
-  }
-  if (!healthForm) {
-    return NextResponse.json({ error: "Health form is required." }, { status: 400 });
   }
 
   const config = await getSaunaConfig();
@@ -75,10 +55,9 @@ export async function POST(req: Request) {
     );
   }
 
-  const formError = validateHealthForm(healthForm);
-  if (formError) {
-    return NextResponse.json({ error: formError }, { status: 400 });
-  }
+  // Contact details and the health declaration are NOT collected here:
+  // Stripe Checkout captures name/email/phone (written back via webhook),
+  // and the mandatory health & safety form is completed onsite via Sentinel.
 
   // ----- Passes: Weekly / Monthly -----------------------------------------
   if (def.kind === "pass") {
@@ -92,12 +71,8 @@ export async function POST(req: Request) {
     const result = await createPass({
       startDate: date,
       validityDays,
-      name: healthForm.full_name,
-      email: healthForm.email,
-      phone: healthForm.phone,
       ticketType,
       unitPricePence: pricePence,
-      healthForm,
       status: stripeEnabled ? "pending" : "requested",
     }).catch((err) => {
       console.error("[checkout] pass RPC failed", err);
@@ -177,13 +152,9 @@ export async function POST(req: Request) {
 
   const result = await bookSlot({
     slotId: slot.id,
-    name: healthForm.full_name,
-    email: healthForm.email,
-    phone: healthForm.phone,
     partySize: size,
     ticketType,
     unitPricePence: pricePence,
-    healthForm,
     status: stripeEnabled ? "pending" : "requested",
   }).catch((err) => {
     console.error("[checkout] booking RPC failed", err);
@@ -234,6 +205,9 @@ async function finalise(
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       client_reference_id: booking.ref,
+      // Contact details are captured here (no form on the booking site):
+      customer_creation: "always",
+      phone_number_collection: { enabled: true },
       line_items: [
         {
           quantity: line.quantity,

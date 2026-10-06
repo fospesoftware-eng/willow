@@ -4,6 +4,7 @@ import {
   getBookingByRef,
   getBookingByStripeSession,
   markBookingPaid,
+  setBookingCustomer,
 } from "@/lib/store/booking";
 import { getStripe } from "@/lib/stripe";
 
@@ -39,6 +40,11 @@ export async function POST(req: Request) {
         client_reference_id?: string | null;
         payment_intent?: string | null;
         metadata?: { booking_id?: string };
+        customer_details?: {
+          name?: string | null;
+          email?: string | null;
+          phone?: string | null;
+        } | null;
       };
 
       const booking =
@@ -51,6 +57,15 @@ export async function POST(req: Request) {
           : null);
 
       if (booking) {
+        if (session.customer_details) {
+          await setBookingCustomer(booking.id, {
+            name: session.customer_details.name,
+            email: session.customer_details.email,
+            phone: session.customer_details.phone,
+          }).catch((err) =>
+            console.error("[webhook] Could not save customer details", err)
+          );
+        }
         await markBookingPaid(booking.id, session.payment_intent ?? null);
         console.info(
           `[webhook] Booking ${booking.ref} marked paid (session ${session.id})`

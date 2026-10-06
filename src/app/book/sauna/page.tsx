@@ -4,7 +4,7 @@ import { SaunaBooking } from "@/components/booking/SaunaBooking";
 export const metadata = {
   title: "Book Sauna & Dip",
   description:
-    "Book a wood-fired sauna & cold-water dip session at Willow Garth Country Park. Choose your date, complete a health form and pay securely.",
+    "Book a wood-fired sauna & cold-water dip session at Willow Garth Country Park. Choose your date and pay securely; the short health & safety declaration is completed onsite before your session.",
 };
 
 export default function BookSaunaPage() {
@@ -15,7 +15,7 @@ export default function BookSaunaPage() {
         eyebrow="Book now"
         title="Sauna & Dip"
         accent="reservation."
-        subtitle="Single sauna & plunge tickets, plunge-only bathing, and weekly or monthly passes. Pick a date, complete the health form and pay securely."
+        subtitle="Single sauna & plunge tickets, plunge-only bathing, and weekly or monthly passes. Pick a date and pay securely — the short health & safety declaration is completed onsite before you enter the water."
         image="/images/sauna-home.jpg"
         imageAlt="Wood-fired sauna at Willow Garth Country Park"
         chips={["Sauna & Plunge £10", "Plunge £5", "Passes £20/£40", "Bathing 7am–7pm"]}

@@ -7,9 +7,9 @@ type AdminBooking = {
   ref: string;
   slot_date: string;
   slot_time: string;
-  customer_name: string;
-  customer_email: string;
-  customer_phone: string;
+  customer_name: string | null;
+  customer_email: string | null;
+  customer_phone: string | null;
   party_size: number;
   status: "pending" | "paid" | "requested" | "cancelled";
   ticket_type?: TicketType;
@@ -125,8 +125,10 @@ export function BookingsPanel() {
                 {b.status}
               </span>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-bold text-forest-900">{b.customer_name}</p>
-                <p className="truncate text-xs text-forest-600">{b.customer_email}</p>
+                <p className="truncate text-sm font-bold text-forest-900">
+                  {b.customer_name ?? (b.status === "pending" ? "Awaiting payment details" : "—")}
+                </p>
+                <p className="truncate text-xs text-forest-600">{b.customer_email ?? "—"}</p>
               </div>
               <div className="text-right">
                 {(() => {
@@ -190,14 +192,8 @@ export function BookingsPanel() {
                       </div>
                     );
                   })()}
-                  <div><dt className="text-xs uppercase tracking-wider text-forest-500">Phone</dt><dd className="font-medium text-forest-900">{b.customer_phone}</dd></div>
-                  <div><dt className="text-xs uppercase tracking-wider text-forest-500">Emergency contact</dt><dd className="font-medium text-forest-900">{b.health_form?.emergency_contact ?? "—"}</dd></div>
-                  <div><dt className="text-xs uppercase tracking-wider text-forest-500">Cold-water experience</dt><dd className="font-medium capitalize text-forest-900">{b.health_form?.cold_water_experience ?? "—"}</dd></div>
-                  <div><dt className="text-xs uppercase tracking-wider text-forest-500">Medical conditions</dt>
-                    <dd className="font-medium text-forest-900">
-                      {b.health_form?.medical_conditions ? (b.health_form.medical_details || "Yes (details on form)") : "None declared"}
-                    </dd>
-                  </div>
+                  <div><dt className="text-xs uppercase tracking-wider text-forest-500">Phone</dt><dd className="font-medium text-forest-900">{b.customer_phone ?? "—"}</dd></div>
+                  <div><dt className="text-xs uppercase tracking-wider text-forest-500">Health declaration</dt><dd className="font-medium text-forest-900">Completed onsite via Sentinel before the session</dd></div>
                   <div><dt className="text-xs uppercase tracking-wider text-forest-500">Booked</dt><dd className="font-medium text-forest-900">{new Date(b.created_at).toLocaleString("en-GB")}</dd></div>
                 </dl>
                 <div className="mt-4 flex flex-wrap items-center gap-2">

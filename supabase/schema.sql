@@ -71,9 +71,9 @@ create table if not exists public.sauna_bookings (
   id                    bigint generated always as identity primary key,
   ref                   text not null unique,
   slot_id               bigint not null references public.sauna_slots(id),
-  customer_name         text not null,
-  customer_email        text not null,
-  customer_phone        text not null,
+  customer_name         text,  -- collected by Stripe Checkout, written back by webhook
+  customer_email        text,
+  customer_phone        text,
   party_size            int  not null check (party_size >= 1),
   health_form           jsonb not null default '{}'::jsonb,
   status                text not null default 'pending',  -- pending | paid | requested | cancelled

@@ -78,10 +78,12 @@ export default async function ConfirmationPage({ searchParams }: Props) {
                     <dd className="font-medium text-forest-900">{booking.party_size}</dd>
                   </div>
                 )}
-                <div className="flex justify-between">
-                  <dt className="text-forest-600">Name</dt>
-                  <dd className="font-medium text-forest-900">{booking.customer_name}</dd>
-                </div>
+                {booking.customer_name && (
+                  <div className="flex justify-between">
+                    <dt className="text-forest-600">Name</dt>
+                    <dd className="font-medium text-forest-900">{booking.customer_name}</dd>
+                  </div>
+                )}
                 <div className="my-2 border-t border-forest-900/10" />
                 <div className="flex justify-between">
                   <dt className="font-semibold text-forest-900">Amount</dt>
@@ -100,6 +102,34 @@ export default async function ConfirmationPage({ searchParams }: Props) {
                   </dd>
                 </div>
               </dl>
+            </div>
+
+            <div className="mt-6 flex items-start gap-4 rounded-2xl border border-gold/40 bg-gold/[0.08] p-6 text-left">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold/20 text-earth-700">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 9v4M12 17h.01" />
+                  <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" />
+                </svg>
+              </span>
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-earth-700">
+                  Before your session
+                </p>
+                <p className="mt-2 text-[13px] leading-relaxed text-forest-800">
+                  Every guest must complete the short health &amp; safety
+                  declaration onsite before entering the water. Arrive a few
+                  minutes early, or{" "}
+                  <Link
+                    href="/sentinal"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-bold underline decoration-gold decoration-2 underline-offset-4"
+                  >
+                    complete the form now (opens in a new tab) ↗
+                  </Link>
+                  .
+                </p>
+              </div>
             </div>
 
             <div className="mt-8 flex flex-wrap justify-center gap-3">

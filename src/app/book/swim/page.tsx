@@ -17,7 +17,7 @@ export default function BookSwimPage() {
         eyebrow="Cold-water bathing · Pine Lake"
         title="Swim only"
         accent="booking."
-        subtitle="Cold-water dipping without the sauna. Choose any day, pick your hourly arrival time, complete the short health form and pay securely — £5 per person, bathing 7am to 7pm, seven days a week."
+        subtitle="Cold-water dipping without the sauna. Choose any day, pick your hourly arrival time and pay securely — the short health & safety declaration is completed onsite before you enter the water. £5 per person, bathing 7am to 7pm, seven days a week."
         image="/images/sauna-whatsapp.jpeg"
         imageAlt="Natural cold-water dip lake at Willow Garth Country Park"
         imagePosition="center"

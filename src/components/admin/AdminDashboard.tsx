@@ -124,7 +124,7 @@ function Overview({ onNavigate }: { onNavigate: (t: Tab) => void }) {
     {
       tab: "bookings" as Tab,
       title: "Sauna Bookings",
-      body: "View all bookings, customer health forms and payment status. Mark payments and cancel sessions.",
+      body: "View all bookings, customer contact details and payment status. Mark payments and cancel sessions.",
       cta: "Manage bookings",
     },
     {

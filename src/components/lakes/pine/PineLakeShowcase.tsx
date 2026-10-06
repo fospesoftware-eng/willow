@@ -101,7 +101,7 @@ const INFO = [
   },
   {
     title: "Contraindications",
-    detail: "The health screening at checkout covers health and medication support before your visit.",
+    detail: "The health declaration completed onsite covers health and medication support before you enter the water.",
     icon: (
       <>
         <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z" />
@@ -241,8 +241,8 @@ export function PineLakeShowcase({ lake: _lake }: { lake: Lake }) {
                   become well known and evidenced — a healthy pastime more
                   people are considering. We provide a safe and welcoming
                   experience with membership options available. As safety is
-                  key, you can only book upon completion of our health
-                  screening process.
+                  key, everyone completes a short health &amp; safety
+                  declaration onsite before entering the water.
                 </p>
               </Reveal>
               <Reveal delay={0.26}>
@@ -473,7 +473,7 @@ export function PineLakeShowcase({ lake: _lake }: { lake: Lake }) {
                 bullets={[
                   "Wood-fired sauna session",
                   "Natural lake plunge",
-                  "Short health screening at checkout",
+                  "Health declaration completed onsite",
                 ]}
                 ctaLabel="Book Now"
                 href="/book/sauna"
@@ -506,19 +506,22 @@ export function PineLakeShowcase({ lake: _lake }: { lake: Lake }) {
               </span>
               <div>
                 <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gold-light">
-                  Notice · Health &amp; safety screening for sauna &amp; dip
+                  Notice · Health &amp; safety declaration for sauna &amp; dip
                 </p>
                 <p className="mt-2 text-[13px] leading-relaxed text-sage-200">
-                  A short health screening questionnaire is built into the
-                  booking calendar — simply pick a date and complete it as part
-                  of checkout. It takes about 60 seconds.
+                  Everyone must complete a short health &amp; safety declaration{" "}
+                  <strong className="text-ivory">onsite, before entering the
+                  water</strong> — it is not required to make a booking. Arrive
+                  a few minutes early, or complete it now to save time.
                 </p>
                 <Link
-                  href="/book/sauna"
+                  href="/sentinal"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="mt-3 inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.16em] text-ivory underline decoration-gold decoration-2 underline-offset-4 transition-colors hover:text-gold-light"
                 >
-                  Book a session
-                  <span aria-hidden>→</span>
+                  Complete the form
+                  <span aria-hidden>↗</span>
                 </Link>
               </div>
             </div>

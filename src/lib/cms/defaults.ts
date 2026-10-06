@@ -530,11 +530,11 @@ const bookHub = {
     {
       title: "Sauna & Dip",
       description:
-        "Book a wood-fired sauna and natural plunge session at Pine Lake through our in-house calendar — choose your slot, complete a health form and pay securely.",
+        "Book a wood-fired sauna and natural plunge session at Pine Lake through our in-house calendar — choose your slot and pay securely. The short health & safety declaration is completed onsite before your session.",
       image: "/images/sauna-home.jpg",
       cta: "Book In-house",
       href: "/book/sauna",
-      note: "Prefer the third-party form? Complete the SENTINAL health & safety declaration.",
+      note: "Get a head start — open the SENTINAL health & safety declaration before you arrive.",
       altHref: "/sentinal",
       altLabel: "Open SENTINAL form",
     },

@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Calendar } from "./Calendar";
 import { TimeGrid } from "./TimeGrid";
 import { TicketPicker } from "./TicketPicker";
-import { HealthForm } from "./HealthForm";
-import type { HealthForm as HealthFormType } from "@/lib/store/booking";
 import {
   DEFAULT_SAUNA_CONFIG,
   SAUNA_DAY_NAMES,
@@ -19,7 +18,7 @@ import {
   type TicketType,
 } from "@/lib/cms/sauna";
 
-type Step = "ticket" | "datetime" | "health";
+type Step = "ticket" | "datetime" | "review";
 
 const TICKET_TYPES = Object.keys(SAUNA_TICKETS) as TicketType[];
 
@@ -77,7 +76,7 @@ export function SaunaBooking({ initialTicket }: { initialTicket?: TicketType }) 
 
   const canContinue = isPass ? Boolean(date) : Boolean(date && time);
 
-  const submitHealth = async (form: HealthFormType) => {
+  const submitCheckout = async () => {
     if (!date || (!isPass && !time)) return;
     setSubmitting(true);
     setError(null);
@@ -90,7 +89,6 @@ export function SaunaBooking({ initialTicket }: { initialTicket?: TicketType }) 
           date,
           time: isPass ? undefined : time,
           quantity: isPass ? 1 : quantity,
-          healthForm: form,
         }),
       });
       const data = await res.json();
@@ -116,6 +114,9 @@ export function SaunaBooking({ initialTicket }: { initialTicket?: TicketType }) 
     .join(" · ");
 
   const stepIndex = step === "ticket" ? 0 : step === "datetime" ? 1 : 2;
+  const payLabel = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+    ? "Confirm & pay"
+    : "Confirm booking";
 
   return (
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.1fr_0.9fr]">
@@ -139,7 +140,7 @@ export function SaunaBooking({ initialTicket }: { initialTicket?: TicketType }) 
           {[
             { label: "Choose ticket" },
             { label: isPass ? "Start date" : "Date & time" },
-            { label: "Your details" },
+            { label: "Review & pay" },
           ].map((s, i) => {
             const active = i === stepIndex;
             const done = i < stepIndex;
@@ -169,8 +170,9 @@ export function SaunaBooking({ initialTicket }: { initialTicket?: TicketType }) 
               Choose your ticket
             </h2>
             <p className="mt-1 text-sm text-forest-700/70">
-              Single visits or unlimited passes — everyone completes a short health
-              form before bathing.
+              Single visits or unlimited passes — pick a slot and pay in under a
+              minute. A short health &amp; safety declaration is completed onsite
+              before you enter the water.
             </p>
             <div className="mt-5">
               <TicketPicker value={ticketType} config={config} onChange={setTicketType} />
@@ -242,10 +244,10 @@ export function SaunaBooking({ initialTicket }: { initialTicket?: TicketType }) 
             <div className="flex justify-end">
               <button
                 disabled={!canContinue}
-                onClick={() => setStep("health")}
+                onClick={() => setStep("review")}
                 className="group inline-flex items-center gap-3 rounded-full bg-forest-900 py-3 pl-7 pr-2.5 text-[13px] font-semibold text-ivory hover:bg-forest-700 disabled:cursor-not-allowed disabled:opacity-40"
               >
-                {isPass ? "Continue to details" : "Continue to details"}
+                Review &amp; pay
                 <span className="flex h-9 w-9 items-center justify-center rounded-full bg-ivory text-forest-900 transition-transform duration-500 group-hover:rotate-45">
                   →
                 </span>
@@ -254,29 +256,117 @@ export function SaunaBooking({ initialTicket }: { initialTicket?: TicketType }) 
           </div>
         )}
 
-        {step === "health" && date && (
-          <div>
-            <div className="mb-4 flex items-center justify-between">
-              <p className="text-sm text-forest-700/70">
-                Booking <strong className="text-forest-900">{def.name}</strong>
-                {isPass
-                  ? ` from ${formatDateLong(date)}`
-                  : ` on ${formatDateLong(date)}${time ? ` at ${formatHM(time)}` : ""}`}
-                {!isPass && quantity > 1 && ` · Party of ${quantity}`}
-              </p>
-              <button
-                onClick={() => setStep("datetime")}
-                className="text-xs font-semibold uppercase tracking-wide text-forest-700 underline-offset-4 hover:underline"
-              >
-                Change
-              </button>
-            </div>
-            {error && (
-              <div className="mb-4 rounded-xl border border-red-300 bg-red-50 p-4 text-sm text-red-700">
-                {error}
+        {step === "review" && date && (
+          <div className="space-y-5">
+            <div className="rounded-[1.75rem] border border-forest-900/10 bg-white/60 p-5 md:p-7">
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="font-display text-xl font-extrabold uppercase text-forest-900">
+                  Review &amp; pay
+                </h2>
+                <button
+                  onClick={() => setStep("datetime")}
+                  className="text-xs font-semibold uppercase tracking-wide text-forest-700 underline-offset-4 hover:underline"
+                >
+                  Change
+                </button>
               </div>
-            )}
-            <HealthForm onSubmit={submitHealth} submitting={submitting} />
+
+              <dl className="mt-5 divide-y divide-forest-900/8 text-sm">
+                <div className="flex items-center justify-between py-3">
+                  <dt className="text-forest-600/70">Ticket</dt>
+                  <dd className="font-semibold text-forest-900">{def.name}</dd>
+                </div>
+                <div className="flex items-center justify-between py-3">
+                  <dt className="text-forest-600/70">{isPass ? "Starts" : "Date"}</dt>
+                  <dd className="font-semibold text-forest-900">
+                    {formatDateLong(date)}
+                  </dd>
+                </div>
+                {!isPass && (
+                  <div className="flex items-center justify-between py-3">
+                    <dt className="text-forest-600/70">Session</dt>
+                    <dd className="font-semibold text-forest-900">
+                      {time ? formatHM(time) : "—"}
+                    </dd>
+                  </div>
+                )}
+                {isPass && (
+                  <div className="flex items-center justify-between py-3">
+                    <dt className="text-forest-600/70">Valid until</dt>
+                    <dd className="font-semibold text-forest-900">
+                      {formatDateLong(passEndDate(date, ticketType))}
+                    </dd>
+                  </div>
+                )}
+                {!isPass && (
+                  <div className="flex items-center justify-between py-3">
+                    <dt className="text-forest-600/70">People</dt>
+                    <dd className="font-semibold text-forest-900">{quantity}</dd>
+                  </div>
+                )}
+                <div className="flex items-center justify-between py-4 text-base">
+                  <dt className="font-bold text-forest-900">Total</dt>
+                  <dd className="font-display text-xl font-extrabold text-forest-900">
+                    {formatGBP(totalPence)}
+                  </dd>
+                </div>
+              </dl>
+
+              {/* Onsite health & safety requirement */}
+              <div className="mt-2 flex items-start gap-4 rounded-2xl border border-gold/40 bg-gold/[0.08] p-5">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold/20 text-earth-700">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 9v4M12 17h.01" />
+                    <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" />
+                  </svg>
+                </span>
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-earth-700">
+                    Required before you enter the water
+                  </p>
+                  <p className="mt-2 text-[13px] leading-relaxed text-forest-800">
+                    Everyone must complete our short health &amp; safety
+                    declaration <strong>onsite, before the activity starts</strong>{" "}
+                    — it is not required to make this booking. Please arrive a
+                    few minutes early to fill it in, or save time by completing
+                    it now.
+                  </p>
+                  <Link
+                    href="/sentinal"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.16em] text-forest-900 underline decoration-gold decoration-2 underline-offset-4 transition-colors hover:text-earth-700"
+                  >
+                    Complete the health &amp; safety form
+                    <span aria-hidden>↗</span>
+                  </Link>
+                </div>
+              </div>
+
+              {error && (
+                <div className="mt-4 rounded-xl border border-red-300 bg-red-50 p-4 text-sm text-red-700">
+                  {error}
+                </div>
+              )}
+
+              <button
+                onClick={submitCheckout}
+                disabled={submitting}
+                className="group mt-6 inline-flex w-full items-center justify-center gap-3 rounded-full bg-forest-900 py-4 pl-7 pr-2.5 text-[13px] font-semibold text-ivory hover:bg-forest-700 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+              >
+                {submitting ? "Please wait…" : payLabel}
+                {!submitting && (
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-ivory text-forest-900 transition-transform duration-500 group-hover:rotate-45">
+                    →
+                  </span>
+                )}
+              </button>
+              <p className="mt-3 text-[11px] leading-relaxed text-forest-600/60">
+                You&apos;ll enter your name, email and phone on the secure
+                payment page. Sauna sessions are limited to {config.maxParty}{" "}
+                people. Strictly no under-16s at the sauna &amp; dip lake.
+              </p>
+            </div>
           </div>
         )}
       </div>
