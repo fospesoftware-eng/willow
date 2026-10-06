@@ -118,11 +118,7 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <SiteChrome
-          lakes={lakes.map((l) => ({
-            name: l.name,
-            href: `/lakes/${l.slug}`,
-            number: l.number || undefined,
-          }))}
+          lakes={lakes.map((l) => ({ name: l.name, href: `/lakes/${l.slug}` }))}
           footer={<SiteFooter settings={settings} />}
           notice={<NoticeBanner enabled={settings.noticeEnabled} text={settings.noticeText} />}
         >

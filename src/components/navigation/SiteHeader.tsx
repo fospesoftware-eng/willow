@@ -13,7 +13,6 @@ const LIGHT_TOP_PATHS = ["/lakes", "/privacy", "/terms", "/cookies"];
 export type HeaderLake = {
   name: string;
   href: string;
-  number?: string;
 };
 
 const CHEVRON = (
@@ -110,19 +109,10 @@ export function SiteHeader({ lakes = [] }: { lakes?: HeaderLake[] }) {
                     </Link>
                     {/* Hover / focus dropdown — direct links to every lake */}
                     <div className="absolute left-1/2 top-full -translate-x-1/2 translate-y-1 pt-3 opacity-0 invisible transition-all duration-300 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:visible group-focus-within:opacity-100">
-                      <div className="min-w-[230px] rounded-2xl border border-forest-900/10 bg-ivory p-2 shadow-pill">
-                        <Link href="/lakes" className={DROP_ITEM_CLS}>
-                          <span>All Lakes</span>
-                          <span aria-hidden className="text-gold">→</span>
-                        </Link>
+                      <div className="min-w-[210px] rounded-2xl border border-forest-900/10 bg-ivory p-2 shadow-pill">
                         {lakes.map((lake) => (
                           <Link key={lake.href} href={lake.href} className={DROP_ITEM_CLS}>
-                            <span>{lake.name}</span>
-                            {lake.number && (
-                              <span className="text-[10px] font-bold tracking-[0.2em] text-gold">
-                                {lake.number}
-                              </span>
-                            )}
+                            {lake.name}
                           </Link>
                         ))}
                       </div>
@@ -228,14 +218,7 @@ export function SiteHeader({ lakes = [] }: { lakes?: HeaderLake[] }) {
                           onClick={() => setOpen(false)}
                           className="flex items-center justify-between py-3 pl-5 pr-2 text-lg font-semibold text-ivory/75 border-b border-ivory/10 transition-colors hover:text-ivory"
                         >
-                          <span className="flex items-center gap-3">
-                            {lake.number && (
-                              <span className="text-[10px] font-bold tracking-[0.25em] text-gold">
-                                {lake.number}
-                              </span>
-                            )}
-                            {lake.name}
-                          </span>
+                          {lake.name}
                           <span className="text-sm text-gold/60" aria-hidden>
                             →
                           </span>
