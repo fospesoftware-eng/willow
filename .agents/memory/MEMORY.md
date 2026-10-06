@@ -1,2 +1,3 @@
 - [Booking confirmation privacy](booking-confirmation-privacy.md) — public confirmation lookup is not identity proof; return display-only data, never a booking record.
 - [Browser test capability](browser-test-capability.md) — the documented testing subagent may be unavailable; local browser testing is the fallback.
+- [Supabase login diagnosis](supabase-login-diagnosis.md) — generic login 401s can mask API-key rejection; verify upstream errors before blaming passwords.

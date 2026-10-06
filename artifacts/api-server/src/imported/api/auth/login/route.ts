@@ -1,6 +1,8 @@
 import type { JsonRequest as Request } from "@/native-request";
 import { cookies } from "@/request-context";
 import { supabaseServer } from "@/imported/lib/supabase";
+import { loginFailure } from "@/lib/login-failure";
+import { logger } from "@/lib/logger";
 
 export async function POST(req: Request) {
   const { email, password } = await req.json().catch(() => ({}));
@@ -13,7 +15,12 @@ export async function POST(req: Request) {
 
   const { error } = await sb.auth.signInWithPassword({ email, password });
   if (error) {
-    return Response.json({ error: "Invalid email or password." }, { status: 401 });
+    const failure = loginFailure(error);
+    logger.warn(
+      { authCode: error.code, authStatus: error.status },
+      "Supabase password sign-in rejected"
+    );
+    return Response.json({ error: failure.error }, { status: failure.status });
   }
 
   const allowed = (process.env.ADMIN_EMAILS ?? "")
