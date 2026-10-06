@@ -6,13 +6,13 @@ import {
   markBookingPaid,
   setBookingCustomer,
 } from "@/lib/store/booking";
-import { getStripe } from "@/lib/stripe";
-
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+import { getStripeRuntime, getStripeClient } from "@/lib/stripe";
 
 export async function POST(req: Request) {
-  const stripe = getStripe();
-  if (!stripe || !webhookSecret) {
+  // Webhooks are processed even when Stripe is temporarily disabled —
+  // pending payments already taken must still be confirmed.
+  const rt = await getStripeRuntime();
+  if (!rt.secretKey || !rt.webhookSecret) {
     return NextResponse.json(
       { error: "Stripe webhook is not configured." },
       { status: 501 }
@@ -27,7 +27,11 @@ export async function POST(req: Request) {
   const rawBody = await req.text();
   let event;
   try {
-    event = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret);
+    event = getStripeClient(rt.secretKey).webhooks.constructEvent(
+      rawBody,
+      signature,
+      rt.webhookSecret
+    );
   } catch (err) {
     console.error("[webhook] Signature verification failed", err);
     return NextResponse.json({ error: "Invalid signature." }, { status: 400 });

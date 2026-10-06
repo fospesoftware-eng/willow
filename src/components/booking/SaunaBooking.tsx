@@ -37,6 +37,7 @@ export function SaunaBooking({ initialTicket }: { initialTicket?: TicketType }) 
   const [quantity, setQuantity] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [stripeEnabled, setStripeEnabled] = useState(true);
 
   // Deep-link pre-selection, e.g. /book/sauna?ticket=plunge_only
   useEffect(() => {
@@ -51,7 +52,10 @@ export function SaunaBooking({ initialTicket }: { initialTicket?: TicketType }) 
   useEffect(() => {
     fetch("/api/sauna/config")
       .then((r) => r.json())
-      .then((d) => d.config && setConfig(d.config))
+      .then((d) => {
+        if (d.config) setConfig(d.config);
+        if (typeof d.stripeEnabled === "boolean") setStripeEnabled(d.stripeEnabled);
+      })
       .catch(() => {});
   }, []);
 
@@ -59,14 +63,6 @@ export function SaunaBooking({ initialTicket }: { initialTicket?: TicketType }) 
   const isPass = def.kind === "pass";
   const unitPrice = config.prices[ticketType];
   const totalPence = unitPrice * (isPass ? 1 : quantity);
-
-  const chooseTicket = (t: TicketType) => {
-    setTicketType(t);
-    setDate(null);
-    setTime(null);
-    setQuantity(1);
-    setStep("datetime");
-  };
 
   const pickDate = (d: string) => {
     setDate(d);
@@ -114,9 +110,7 @@ export function SaunaBooking({ initialTicket }: { initialTicket?: TicketType }) 
     .join(" · ");
 
   const stepIndex = step === "ticket" ? 0 : step === "datetime" ? 1 : 2;
-  const payLabel = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-    ? "Confirm & pay"
-    : "Confirm booking";
+  const payLabel = stripeEnabled ? "Confirm & pay" : "Confirm booking";
 
   return (
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.1fr_0.9fr]">

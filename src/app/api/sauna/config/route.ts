@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { getSaunaConfig } from "@/lib/store/booking";
+import { getStripeRuntime } from "@/lib/stripe";
 
 export const revalidate = 60;
 
 export async function GET() {
   try {
-    const config = await getSaunaConfig();
-    return NextResponse.json({ config });
+    const [config, stripe] = await Promise.all([getSaunaConfig(), getStripeRuntime()]);
+    return NextResponse.json({ config, stripeEnabled: stripe.enabled && Boolean(stripe.secretKey) });
   } catch (err) {
     console.error("[sauna-config] failed", err);
     return NextResponse.json(

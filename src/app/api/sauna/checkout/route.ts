@@ -5,7 +5,7 @@ import {
   ensureSlot,
   getSaunaConfig,
 } from "@/lib/store/booking";
-import { getStripe, stripeEnabled } from "@/lib/stripe";
+import { getStripeRuntime, getStripeClient } from "@/lib/stripe";
 import {
   SAUNA_TICKETS,
   passEndDate,
@@ -43,6 +43,7 @@ export async function POST(req: Request) {
   }
 
   const config = await getSaunaConfig();
+  const stripe = await getStripeRuntime();
   const def = SAUNA_TICKETS[ticketType];
   const pricePence = config.prices[ticketType];
   const now = ukNow();
@@ -73,7 +74,7 @@ export async function POST(req: Request) {
       validityDays,
       ticketType,
       unitPricePence: pricePence,
-      status: stripeEnabled ? "pending" : "requested",
+      status: stripe.enabled && stripe.secretKey ? "pending" : "requested",
     }).catch((err) => {
       console.error("[checkout] pass RPC failed", err);
       return null;
@@ -89,12 +90,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: result.error }, { status: 409 });
     }
 
-    return finalise(req, result.booking, {
-      productName: `${def.name} — Willow Garth`,
-      description: `Valid ${date} to ${endDate} (${validityDays} consecutive days).`,
-      unitAmount: pricePence,
-      quantity: quantityNum,
-    });
+    return finalise(
+      req,
+      result.booking,
+      {
+        productName: `${def.name} — Willow Garth`,
+        description: `Valid ${date} to ${endDate} (${validityDays} consecutive days).`,
+        unitAmount: pricePence,
+        quantity: quantityNum,
+      },
+      stripe
+    );
   }
 
   // ----- Single sessions: Sauna & Plunge / Plunge Only --------------------
@@ -155,7 +161,7 @@ export async function POST(req: Request) {
     partySize: size,
     ticketType,
     unitPricePence: pricePence,
-    status: stripeEnabled ? "pending" : "requested",
+    status: stripe.enabled && stripe.secretKey ? "pending" : "requested",
   }).catch((err) => {
     console.error("[checkout] booking RPC failed", err);
     return null;
@@ -174,24 +180,30 @@ export async function POST(req: Request) {
     );
   }
 
-  return finalise(req, result.booking, {
-    productName: `${def.name} — Willow Garth`,
-    description: `${date} at ${time}. ${size} ${size === 1 ? "person" : "people"}.`,
-    unitAmount: pricePence,
-    quantity: size,
-  });
+  return finalise(
+    req,
+    result.booking,
+    {
+      productName: `${def.name} — Willow Garth`,
+      description: `${date} at ${time}. ${size} ${size === 1 ? "person" : "people"}.`,
+      unitAmount: pricePence,
+      quantity: size,
+    },
+    stripe
+  );
 }
 
 async function finalise(
   req: Request,
   booking: { id: number; ref: string },
-  line: { productName: string; description: string; unitAmount: number; quantity: number }
+  line: { productName: string; description: string; unitAmount: number; quantity: number },
+  stripe: Awaited<ReturnType<typeof getStripeRuntime>>
 ) {
   const url = new URL(req.url);
   const origin = `${url.protocol}//${url.host}`;
 
   // Manual request mode (Stripe not configured)
-  if (!stripeEnabled || !getStripe()) {
+  if (!stripe.enabled || !stripe.secretKey) {
     return NextResponse.json({
       ok: true,
       requested: true,
@@ -201,8 +213,8 @@ async function finalise(
   }
 
   try {
-    const stripe = getStripe()!;
-    const session = await stripe.checkout.sessions.create({
+    const client = getStripeClient(stripe.secretKey);
+    const session = await client.checkout.sessions.create({
       mode: "payment",
       client_reference_id: booking.ref,
       // Contact details are captured here (no form on the booking site):

@@ -15,6 +15,22 @@ create table if not exists public.site_settings (
   updated_at timestamptz not null default now()
 );
 
+-- Admin-managed Stripe settings (Settings → Stripe payments in /admin).
+-- RLS enabled with NO public policies: only the service-role key can read it,
+-- so secret keys are never exposed through the public REST API.
+create table if not exists public.stripe_settings (
+  id                   boolean primary key default true check (id),
+  enabled              boolean,
+  test_mode            boolean not null default true,
+  live_secret_key      text,
+  live_publishable_key text,
+  live_webhook_secret  text,
+  test_secret_key      text,
+  test_publishable_key text,
+  test_webhook_secret  text,
+  updated_at           timestamptz not null default now()
+);
+
 create table if not exists public.experiences (
   slug             text primary key,
   name             text not null,
@@ -171,6 +187,7 @@ $$;
 
 -- ---------- Row Level Security --------------------------------------------
 alter table public.site_settings   enable row level security;
+alter table public.stripe_settings enable row level security;
 alter table public.experiences     enable row level security;
 alter table public.lakes           enable row level security;
 alter table public.sauna_slots     enable row level security;
@@ -230,6 +247,10 @@ on conflict (key) do nothing;
 insert into public.site_settings (key, value) values
   ('notice', jsonb_build_object('enabled', false, 'text', ''))
 on conflict (key) do nothing;
+
+insert into public.stripe_settings (id, enabled, test_mode)
+values (true, null, true)
+on conflict (id) do nothing;
 
 -- ----- Lakes -----
 insert into public.lakes
