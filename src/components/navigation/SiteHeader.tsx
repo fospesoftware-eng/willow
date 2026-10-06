@@ -15,14 +15,14 @@ export type HeaderLake = {
   href: string;
 };
 
-const CHEVRON = (
+const chevron = (open: boolean) => (
   <svg
     width="10"
     height="10"
     viewBox="0 0 10 6"
     fill="none"
     aria-hidden
-    className="ml-1.5 transition-transform duration-300 group-hover:rotate-180"
+    className={`ml-1.5 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
   >
     <path
       d="M1 1l4 4 4-4"
@@ -40,9 +40,15 @@ const DROP_ITEM_CLS =
 export function SiteHeader({ lakes = [] }: { lakes?: HeaderLake[] }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [lakesOpen, setLakesOpen] = useState(false);
   const pathname = usePathname();
   const lightTop = LIGHT_TOP_PATHS.includes(pathname);
   const solid = scrolled || lightTop;
+
+  // Close the Lakes dropdown automatically after navigating
+  useEffect(() => {
+    setLakesOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -97,21 +103,40 @@ export function SiteHeader({ lakes = [] }: { lakes?: HeaderLake[] }) {
             >
               {nav.map((item) =>
                 item.label === "Lakes" && lakes.length > 0 ? (
-                  <div key={item.label} className="relative group">
-                    <Link
-                      href={item.href}
+                  <div
+                    key={item.label}
+                    className="relative"
+                    onMouseEnter={() => setLakesOpen(true)}
+                    onMouseLeave={() => setLakesOpen(false)}
+                  >
+                    <button
+                      type="button"
+                      aria-haspopup="true"
+                      aria-expanded={lakesOpen}
+                      onClick={() => setLakesOpen((o) => !o)}
                       className={`flex items-center px-4 py-2 rounded-full text-[12px] font-medium tracking-wide transition-all duration-300 hover:bg-forest-900 hover:text-ivory ${
                         solid ? "text-forest-800" : "text-ivory"
                       }`}
                     >
                       {item.label}
-                      {CHEVRON}
-                    </Link>
-                    {/* Hover / focus dropdown — direct links to every lake */}
-                    <div className="absolute left-1/2 top-full -translate-x-1/2 translate-y-1 pt-3 opacity-0 invisible transition-all duration-300 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:visible group-focus-within:opacity-100">
+                      {chevron(lakesOpen)}
+                    </button>
+                    {/* Dropdown — direct links to every lake; closes on navigation */}
+                    <div
+                      className={`absolute left-1/2 top-full -translate-x-1/2 translate-y-1 pt-3 transition-all duration-300 ${
+                        lakesOpen
+                          ? "visible opacity-100 translate-y-0 pointer-events-auto"
+                          : "invisible opacity-0 pointer-events-none"
+                      }`}
+                    >
                       <div className="min-w-[210px] rounded-2xl border border-forest-900/10 bg-ivory p-2 shadow-pill">
                         {lakes.map((lake) => (
-                          <Link key={lake.href} href={lake.href} className={DROP_ITEM_CLS}>
+                          <Link
+                            key={lake.href}
+                            href={lake.href}
+                            onClick={() => setLakesOpen(false)}
+                            className={DROP_ITEM_CLS}
+                          >
                             {lake.name}
                           </Link>
                         ))}
