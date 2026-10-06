@@ -103,9 +103,16 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${playfair.variable} ${inter.variable} ${manrope.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-ivory text-forest-900">
+      {/* suppressHydrationWarning: browser extensions (ColorZilla, Grammarly,
+          password managers, etc.) inject attributes such as cz-shortcut-listen
+          onto <body> before hydration, causing a benign mismatch. */}
+      <body
+        suppressHydrationWarning
+        className="min-h-full flex flex-col bg-ivory text-forest-900"
+      >
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
