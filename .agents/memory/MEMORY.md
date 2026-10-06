@@ -1,0 +1,2 @@
+- [Booking confirmation privacy](booking-confirmation-privacy.md) — public confirmation lookup is not identity proof; return display-only data, never a booking record.
+- [Browser test capability](browser-test-capability.md) — the documented testing subagent may be unavailable; local browser testing is the fallback.

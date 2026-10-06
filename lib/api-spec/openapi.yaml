@@ -1,36 +1,1134 @@
-openapi: 3.1.0
-info:
-  # Do not change the title, if the title changes, the import paths will be broken
-  title: Api
-  version: 0.1.0
-  description: API specification
-servers:
-  - url: /api
-    description: Base API path
-tags:
-  - name: health
-    description: Health operations
-paths:
-  /healthz:
-    get:
-      operationId: healthCheck
-      tags: [health]
-      summary: Health check
-      description: Returns server health status
-      responses:
-        "200":
-          description: Healthy
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HealthStatus"
-components:
-  schemas:
-    HealthStatus:
-      type: object
-      properties:
-        status:
-          type: string
-      required:
-        - status
-
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Api",
+    "version": "0.1.0",
+    "description": "Willow Garth migrated API. Existing Supabase remains the data source."
+  },
+  "servers": [
+    {
+      "url": "/api"
+    }
+  ],
+  "paths": {
+    "/healthz": {
+      "get": {
+        "operationId": "healthCheck",
+        "responses": {
+          "200": {
+            "description": "Healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/content/bootstrap": {
+      "get": {
+        "operationId": "get_content_bootstrap",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        }
+      }
+    },
+    "/auth/session": {
+      "get": {
+        "operationId": "get_auth_session",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        }
+      }
+    },
+    "/booking/confirmation": {
+      "get": {
+        "operationId": "get_booking_confirmation",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingConfirmation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        },
+        "parameters": [
+          {
+            "name": "ref",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/admin/bookings/{ref}": {
+      "patch": {
+        "operationId": "patch_admin_bookings_ref_",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        },
+        "parameters": [
+          {
+            "name": "ref",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/bookings": {
+      "get": {
+        "operationId": "get_admin_bookings",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        }
+      }
+    },
+    "/admin/experiences": {
+      "get": {
+        "operationId": "get_admin_experiences",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "patch_admin_experiences",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/lakes": {
+      "get": {
+        "operationId": "get_admin_lakes",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "patch_admin_lakes",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/media/{name}": {
+      "delete": {
+        "operationId": "delete_admin_media_name_",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/admin/media": {
+      "get": {
+        "operationId": "get_admin_media",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        }
+      },
+      "post": {
+        "operationId": "post_admin_media",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/MediaUpload"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/pages/{slug}": {
+      "get": {
+        "operationId": "get_admin_pages_slug_",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        },
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "put": {
+        "operationId": "put_admin_pages_slug_",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        },
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/pages": {
+      "get": {
+        "operationId": "get_admin_pages",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        }
+      }
+    },
+    "/admin/settings": {
+      "get": {
+        "operationId": "get_admin_settings",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        }
+      },
+      "put": {
+        "operationId": "put_admin_settings",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/slots/{id}": {
+      "delete": {
+        "operationId": "delete_admin_slots_id_",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "patch_admin_slots_id_",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/slots": {
+      "get": {
+        "operationId": "get_admin_slots",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        }
+      },
+      "post": {
+        "operationId": "post_admin_slots",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/stripe-settings": {
+      "get": {
+        "operationId": "get_admin_stripe_settings",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        }
+      },
+      "put": {
+        "operationId": "put_admin_stripe_settings",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceInput"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "post_admin_stripe_settings",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "post_auth_login",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "operationId": "post_auth_logout",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contact": {
+      "post": {
+        "operationId": "post_contact",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sauna/checkout": {
+      "post": {
+        "operationId": "post_sauna_checkout",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sauna/config": {
+      "get": {
+        "operationId": "get_sauna_config",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        }
+      }
+    },
+    "/sauna/slots": {
+      "get": {
+        "operationId": "get_sauna_slots",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        }
+      }
+    },
+    "/stripe/webhook": {
+      "post": {
+        "operationId": "post_stripe_webhook",
+        "responses": {
+          "200": {
+            "description": "Original handler result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "503": {
+            "description": "Service unavailable or not configured"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceInput"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HealthStatus": {
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "ServiceData": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "ServiceInput": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "MediaUpload": {
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary"
+          }
+        }
+      },
+      "BookingConfirmation": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "ref": {
+            "type": "string"
+          },
+          "ticket_type": {
+            "type": "string",
+            "enum": [
+              "sauna_plunge",
+              "plunge_only",
+              "weekly_pass",
+              "monthly_pass"
+            ]
+          },
+          "session_date": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "session_time": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pass_end": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "party_size": {
+            "type": "integer"
+          },
+          "unit_price_pence": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "paid",
+              "requested",
+              "cancelled"
+            ]
+          }
+        },
+        "required": [
+          "ref",
+          "ticket_type",
+          "session_date",
+          "session_time",
+          "pass_end",
+          "party_size",
+          "unit_price_pence",
+          "status"
+        ]
+      }
+    }
+  }
+}

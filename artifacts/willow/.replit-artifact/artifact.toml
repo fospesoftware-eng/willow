@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Willow Garth Country Park"
+description = "Willow Garth Country Park website with lake information, outdoor experiences, sauna bookings, contact forms and an administration dashboard."
+version = "1.0.0"
+id = "artifacts/willow"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21614
+
+[services.development]
+run = "pnpm --filter @workspace/willow run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/willow", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/willow/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21614"
+BASE_PATH = "/"

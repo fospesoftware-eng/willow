@@ -3,6 +3,8 @@ import cors from "cors";
 import pinoHttp from "pino-http";
 import router from "./routes";
 import { logger } from "./lib/logger";
+import cookieParser from "cookie-parser";
+import importedRouter from "./routes/imported";
 
 const app: Express = express();
 
@@ -26,9 +28,16 @@ app.use(
   }),
 );
 app.use(cors());
+app.set("trust proxy", 1);
+app.use(cookieParser());
+app.use("/api", importedRouter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);
+app.use((err: Error, req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  req.log.error({ name: err.name }, "Request failed");
+  res.status(503).json({ error: "This service is not configured or is temporarily unavailable. Please contact Willow Garth directly." });
+});
 
 export default app;
